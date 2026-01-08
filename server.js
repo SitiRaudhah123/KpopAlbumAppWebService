@@ -9,7 +9,7 @@ const dbConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  database: process.env.DB_NAME,   
   port: process.env.DB_PORT,
   waitForConnections: true,
   connectionLimit: 100,
@@ -30,7 +30,9 @@ app.listen(port, () => {
 app.get('/albums', async (req, res) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute('SELECT * FROM kpop_albums');
+    const [rows] = await connection.execute(
+      'SELECT * FROM defaultdb.kpop_albums'
+    );
     await connection.end();
     res.json(rows);
   } catch (err) {
@@ -52,7 +54,7 @@ app.post('/albums', async (req, res) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
     await connection.execute(
-      'INSERT INTO kpop_albums (album_name, album_pic) VALUES (?, ?)',
+      'INSERT INTO defaultdb.kpop_albums (album_name, album_pic) VALUES (?, ?)',
       [album_name, album_pic]
     );
     await connection.end();
@@ -82,7 +84,7 @@ app.put('/albums/:id', async (req, res) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
     const [result] = await connection.execute(
-      'UPDATE kpop_albums SET album_name = ?, album_pic = ? WHERE id = ?',
+      'UPDATE defaultdb.kpop_albums SET album_name = ?, album_pic = ? WHERE id = ?',
       [album_name, album_pic, albumId]
     );
     await connection.end();
@@ -107,7 +109,7 @@ app.delete('/albums/:id', async (req, res) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
     const [result] = await connection.execute(
-      'DELETE FROM kpop_albums WHERE id = ?',
+      'DELETE FROM defaultdb.kpop_albums WHERE id = ?',
       [albumId]
     );
     await connection.end();
